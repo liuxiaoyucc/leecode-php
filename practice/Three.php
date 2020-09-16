@@ -11,10 +11,10 @@ class Three
     public function lengthOfLongestSubstring($str)
     {
         $length = strlen($str);
-        $res = [];
-        $max = 0;
-        $tmp_max = 0;
-        $amount_sublen = 0;
+        $res = []; // 存放过程字符串
+        $max = 0; // 记录最大的长度
+        $tmp_max = 0; // 每次循环时的临时长度
+        $amount_sublen = 0; // 左侧共移除了多少个元素
 
         for ($i = 0; $i < $length; $i++) { 
             if (!isset($res['bigbear_'.$str[$i]])) {
@@ -34,10 +34,43 @@ class Three
         }
         return $max;
     }
+
+    // 优化
+    public function lengthOfLongestSubstring2($str)
+    {
+        $length = strlen($str);
+        if ($length) {
+            $res = [];
+            $nums = []; // 保存经历过的长度
+            $tmp_max = 0; // 当前长度
+            $cur_index = 0; // 指针位置. 每一段未重复字符串的开头位置
+
+            for ($i = 0; $i < $length; $i++) {
+                
+                if (!isset($res[$str[$i]])) {
+                    $res[$str[$i]] = $i;
+                    $tmp_max ++;
+                }else {
+                    if ($cur_index < $res[$str[$i]]) {
+                        $cur_index = $res[$str[$i]];
+                    }
+                    $nums[] = $tmp_max;
+
+                    $tmp_max = $i - $cur_index;
+                    $res[$str[$i]] = $i;
+                }
+
+            }
+            $nums[]=$tmp_max;
+            return max($nums);
+        }
+        return 0;
+        
+    }
 }
 
 $three = new Three;
 
-$str = "abc123abc123abc123";
-$res = $three->lengthOfLongestSubstring($str);
+$str = " ";
+$res = $three->lengthOfLongestSubstring2($str);
 print_r($res);
